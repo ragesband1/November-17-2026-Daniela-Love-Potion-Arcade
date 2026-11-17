@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Daniela Love Potion Arcade</title>
+<style>
+:root{--bg:#170d2c;--panel:#281744;--panel2:#392057;--pink:#ff6fae;--gold:#ffd166;--mint:#8ef0c5;--text:#fff7ff;--muted:#d6c6e7;--red:#ff647c}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top,#48235c,#170d2c 55%);color:var(--text);font:16px/1.45 system-ui,Arial,sans-serif;min-height:100vh}
+header{text-align:center;padding:28px 16px 18px}h1{margin:0;color:#ffb4d2;font-size:clamp(2rem,5vw,3.5rem);text-shadow:0 3px 18px #ff4f9b66}header p{color:var(--muted);margin:8px auto;max-width:850px}
+main{max-width:1150px;margin:auto;padding:0 16px 40px}.topbar,.panel,.game-card{background:#281744eF;border:1px solid #ffffff20;border-radius:18px;padding:16px;box-shadow:0 12px 30px #0003}
+.topbar{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:18px}.stats{display:flex;gap:10px;flex-wrap:wrap}.stat{background:#ffffff12;padding:8px 12px;border-radius:12px}.muted{color:var(--muted)}button{border:0;border-radius:12px;padding:11px 16px;background:var(--pink);color:#260d27;font-weight:800;cursor:pointer;transition:transform .12s,filter .12s}button:hover{transform:translateY(-2px);filter:brightness(1.08)}button:disabled{opacity:.45;cursor:not-allowed;transform:none}.secondary{background:#ffffff18;color:var(--text);border:1px solid #ffffff28}.gold{background:var(--gold)}.mint{background:var(--mint)}.danger{background:var(--red);color:#240b17}
+#menu{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}.game-card{display:flex;flex-direction:column;gap:10px}.game-card .emoji{font-size:2.2rem}.game-card h3{margin:0;color:#ffc0dc}.game-card p{margin:0;color:var(--muted);flex:1}.game{display:none;margin-top:16px}.game.active{display:block}.game h2{margin-top:0;color:#ffc0dc}.playarea{background:#160d25;border:1px solid #ffffff20;border-radius:16px;padding:18px;min-height:220px;margin:14px 0}.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}.row>*{flex:0 0 auto}.ingredients{display:grid;grid-template-columns:repeat(auto-fit,minmax(125px,1fr));gap:10px;margin-top:14px}.ingredient{background:#ffffff12;color:white;border:1px solid #ffffff25;min-height:62px}.bottle{font-size:4rem;text-align:center;filter:drop-shadow(0 0 14px #ff70b0)}.sequence{font-size:1.15rem;color:var(--gold);font-weight:800;letter-spacing:.04em}.big{font-size:clamp(1.5rem,4vw,2.5rem);font-weight:900}.feedback{min-height:28px;color:var(--mint);font-weight:700}.bad{color:var(--red)}input{padding:12px;border-radius:10px;border:1px solid #ffffff40;background:#fff;color:#24132d;font-size:1rem;min-width:220px;max-width:100%}
+canvas{display:block;width:100%;max-width:760px;height:auto;background:#201337;border:2px solid #8d6bb2;border-radius:12px;margin:10px auto;touch-action:none}.history{max-height:180px;overflow:auto;background:#ffffff0d;padding:10px;border-radius:12px}.history li{margin:4px 0}.linklist a{color:#ffc0dc;display:inline-block;margin:6px 12px 6px 0}.notice{font-size:.9rem;color:var(--muted);background:#ffffff0b;padding:12px;border-radius:12px}
+footer{text-align:center;color:var(--muted);padding:25px 10px;font-size:.9rem}
+@media(max-width:600px){.topbar{align-items:flex-start}.playarea{padding:12px}.ingredients{grid-template-columns:repeat(2,minmax(0,1fr))}}
+</style>
+</head>
+<body>
+<header>
+<h1>🧪 Daniela Love Potion Arcade</h1>
+<p>Five mini-games • 100 levels each • timed challenges • fictional characters • consent-first relationship adventures</p>
+</header>
+<main>
+<div class="topbar">
+ <div class="stats"><div class="stat">⭐ Total points: <b id="totalPoints">0</b></div><div class="stat">❤️ Lives: <b id="lives">5</b></div><div class="stat">🏆 Best level: <b id="best">1</b></div></div>
+ <div class="row"><button class="secondary" id="soundBtn">🔊 Sound: ON</button><button class="secondary" id="historyBtn">📜 History</button><button class="secondary" id="homeBtn">⌂ Arcade menu</button></div>
+</div>
+<section id="menu">
+ <article class="game-card"><div class="emoji">🧪</div><h3>1. Daniela's Potion Lab</h3><p>Memorize the recipe, then select the ingredients in the correct order before time runs out.</p><button onclick="startGame('potion')">Play Potion Lab</button></article>
+ <article class="game-card"><div class="emoji">🌍</div><h3>2. Country Speed Review</h3><p>Fast country-and-culture review. Countries are not themselves “polyamorous” or “monogamous”; answer factual prompts instead.</p><button onclick="startGame('country')">Play Country Review</button></article>
+ <article class="game-card"><div class="emoji">🌀</div><h3>3. Poly vs Mono Maze</h3><p>Move with your mouse. Collect every heart token and avoid maze walls and roaming obstacles.</p><button onclick="startGame('maze')">Play Maze</button></article>
+ <article class="game-card"><div class="emoji">💌</div><h3>4. Full-Name Mastery</h3><p>Type the complete fictional character name exactly, then press Enter before the countdown ends.</p><button onclick="startGame('names')">Play Name Mastery</button></article>
+ <article class="game-card"><div class="emoji">⚖️</div><h3>5. Relationship Awareness Challenge</h3><p>Yes/No questions about consent, communication, and relationship concepts. Optional country-law cards are user-editable.</p><button onclick="startGame('awareness')">Play Awareness Quiz</button></article>
+</section>
+
+<section id="game" class="game panel">
+ <div class="row" style="justify-content:space-between"><div><h2 id="gameTitle">Game</h2><div class="muted">Level <b id="level">1</b> / 100 · Time: <b id="timer">--</b>s</div></div><button class="secondary" id="restartBtn">Restart game</button></div>
+ <div class="playarea" id="playarea"></div><div class="feedback" id="feedback" aria-live="polite"></div>
+ <div class="row"><button class="secondary" id="nextBtn" style="display:none">Continue →</button><button class="secondary" id="quitBtn">Exit to menu</button></div>
+</section>
+<section id="historyPanel" class="panel" style="display:none;margin-top:16px">
+ <h2>📜 Game history</h2><p class="muted">Correctly completed levels and fictional character names appear here.</p><ol id="historyList" class="history"></ol><button class="secondary" id="closeHistory">Close history</button>
+</section>
+<div class="panel" style="margin-top:18px">
+ <h2>🔗 Your existing game pages</h2>
+ <div class="linklist">
+ <a target="_blank" rel="noopener" href="https://ragesband1.github.io/November-16-2026-Daniela-Love-Potion-for-Siquijor-Levels-1-100-/">Potion Levels 1–100</a>
+ <a target="_blank" rel="noopener" href="https://ragesband1.github.io/November-16-2026-Daniela-Love-Potion---Siquijor-Game/">Potion Siquijor</a>
+ <a target="_blank" rel="noopener" href="https://ragesband1.github.io/November-16-2026-Daniela-Love-Potion-Country-Polyamory-Game/">Country Polyamory Game</a>
+ <a target="_blank" rel="noopener" href="https://ragesband1.github.io/November-16-2026-Daniela-Love-Potion-for-Siquijor/">Daniela Love Potion</a>
+ <a target="_blank" rel="noopener" href="https://ragesband1.github.io/November-17-2026-Gayuma-Marathon-Polyamory-vs-Monogamy/">Gayuma Marathon Maze</a>
+ <a target="_blank" rel="noopener" href="https://ragesband1.github.io/November-17-2026-Gayuma-Marathon---Polyamory-vs-Monogamy/">Maze alternate version</a>
+ <a target="_blank" rel="noopener" href="https://ragesband1.github.io/November-17-2026-Love-Potion-Name-Mastery-100-Levels-/">Name Mastery 100</a>
+ <a target="_blank" rel="noopener" href="https://ragesband1.github.io/November-17-2026-Fill-Full-Name---Single-to-Polyamorous-Girlfriends/">Full Name game</a>
+ <a target="_blank" rel="noopener" href="https://ragesband1.github.io/November-17-2026-Polyamorous-vs.-Monogamous-195-Country-States-Challenge/">195 Country States Challenge</a>
+ <a target="_blank" rel="noopener" href="https://ragesband1.github.io/November-17-2026-Polyamorous-Vs-Monogamous---195-Country-States/">195 Country States alternate</a>
+ </div>
+ <p class="notice">Audio note: this file creates sound effects and spoken announcements using your browser's built-in audio and speech features. To use specific MP3 songs or voice recordings, add your own licensed audio files in the audio section of the script. No external MP3 is assumed or copied.</p>
+</div>
+</main>
+<footer>Made as a single-file HTML/CSS/JavaScript arcade. Fictional characters are adults; every relationship outcome is based on mutual consent.</footer>
+<script>
+"use strict";
+const $ = id => document.getElementById(id);
+const state = {game:null,level:1,lives:5,points:0,time:0,timer:null,done:false,sound:true,history:[],usedNames:new Set(),recipe:[],recipeIndex:0,maze:null};
+const firstNames=["Amara","Bianca","Celeste","Dahlia","Elena","Faye","Gia","Hana","Isla","Jasmine","Kiara","Luna","Mira","Nadia","Ophelia","Priya","Quinn","Raina","Sofia","Talia","Uma","Valentina","Willow","Xandra","Yasmin","Zara","Alina","Bria","Camille","Demi","Esme","Freya","Greta","Hazel","Iris","Joy","Kara","Leah","Malia","Noelle","Olive","Paige","Rosa","Selene","Thea","Vera","Wren","Yvette"];
+const middleNames=["Mae","Rose","Claire","Grace","Faith","Skye","Belle","June","Hope","Rae","Marie","Joy","Anne","Pearl","Dawn","Faye"];
+const surnames=["Alvarez","Bautista","Cruz","Dela Vega","Evans","Flores","Garcia","Hernandez","Ibrahim","Jacobs","King","Lopez","Mendoza","Navarro","Ortega","Reyes","Santos","Torres","Uy","Villanueva","Wong","Young"];
+const ingredients=["Moonflower","Siquijor Orchid","Silver Dew","Rose Petals","Starlight Sugar","Cinnamon Bark","Lavender","Pearl Dust"];
+const countryFacts=[
+ {q:"Which continent is the Philippines part of?",a:"Asia",opts:["Asia","Europe","Africa"]},
+ {q:"What is the capital of Japan?",a:"Tokyo",opts:["Seoul","Tokyo","Bangkok"]},
+ {q:"Which ocean lies east of the Philippines?",a:"Pacific Ocean",opts:["Atlantic Ocean","Indian Ocean","Pacific Ocean"]},
+ {q:"What is the capital of France?",a:"Paris",opts:["Rome","Paris","Madrid"]},
+ {q:"Which country is famous for the city of Marrakech?",a:"Morocco",opts:["Morocco","Peru","Norway"]},
+ {q:"What is the capital of Canada?",a:"Ottawa",opts:["Toronto","Ottawa","Vancouver"]},
+ {q:"Which country has the city of Nairobi?",a:"Kenya",opts:["Kenya","Chile","Greece"]},
+ {q:"What is the capital of Thailand?",a:"Bangkok",opts:["Hanoi","Bangkok","Manila"]},
+ {q:"Which country is shaped like a boot?",a:"Italy",opts:["Italy","Iceland","India"]},
+ {q:"What is the capital of New Zealand?",a:"Wellington",opts:["Auckland","Wellington","Sydney"]}
+];
+const awareness=[
+ {q:"Should every person freely agree before entering a relationship?",a:"Yes",why:"Consent must be freely given and can be withdrawn."},
+ {q:"Does being polyamorous mean everyone must date the same person?",a:"No",why:"Relationship structures differ; communication and agreements matter."},
+ {q:"Can a person say no or change their mind at any time?",a:"Yes",why:"Consent is ongoing."},
+ {q:"Does a country's population have one shared relationship style?",a:"No",why:"People within every country have diverse identities and choices."},
+ {q:"Is honesty about existing partners important?",a:"Yes",why:"Transparency helps everyone make informed choices."},
+ {q:"Does monogamy automatically mean someone is foolish or wrong?",a:"No",why:"Consensual monogamy and consensual non-monogamy are both valid choices."},
+ {q:"Should a partner be pressured into a relationship arrangement?",a:"No",why:"Pressure is not consent."},
+ {q:"Can boundaries be discussed and revised together?",a:"Yes",why:"Healthy agreements are clear, mutual, and revisited."}
+];
+function rand(arr){return arr[Math.floor(Math.random()*arr.length)]}
+function shuffle(arr){return [...arr].sort(()=>Math.random()-.5)}
+function beep(freq=600,dur=.12,type="sine"){if(!state.sound)return;try{const c=beep.ctx||(beep.ctx=new(window.AudioContext||window.webkitAudioContext)());const o=c.createOscillator(),g=c.createGain();o.type=type;o.frequency.value=freq;g.gain.value=.07;o.connect(g);g.connect(c.destination);o.start();g.gain.exponentialRampToValueAtTime(.001,c.currentTime+dur);o.stop(c.currentTime+dur)}catch(e){}}
+function speak(txt){if(!state.sound||!("speechSynthesis"in window))return;try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(txt);u.rate=1.08;u.pitch=1.12;speechSynthesis.speak(u)}catch(e){}}
+function updateStats(){$("totalPoints").textContent=state.points;$("lives").textContent=state.lives;$("best").textContent=Math.max(1,...state.history.map(x=>x.level))}
+function setFeedback(t,bad=false){$("feedback").textContent=t;$("feedback").className=bad?"feedback bad":"feedback"}
+function setTimer(seconds){clearInterval(state.timer);state.time=seconds;$("timer").textContent=state.time;state.timer=setInterval(()=>{state.time--;$("timer").textContent=state.time;if(state.time<=0){clearInterval(state.timer);mistake("Time is up!");}},1000)}
+function mistake(msg){if(state.done)return;state.lives--;updateStats();beep(170,.28,"sawtooth");setFeedback(msg+" −1 life.",true);if(state.lives<=0){gameOver();return}setTimer(Math.max(8,16-Math.floor(state.level/12)))}
+function success(label){if(state.done)return;clearInterval(state.timer);state.points+=10+state.level;updateStats();state.history.push({game:state.game,level:state.level,label});setFeedback("Correct! +"+(10+state.level)+" points.");beep(880,.15);speak("Level complete!");$("nextBtn").style.display="inline-block";state.done=true}
+function gameOver(){clearInterval(state.timer);state.done=true;$("playarea").innerHTML='<div class="big">💔 GAME OVER</div><p>You reached level '+state.level+'. Your completed levels and names remain in History.</p><button onclick="startGame(state.game)">Try again</button>';speak("Game over.");$("nextBtn").style.display="none"}
+function finishAll(){clearInterval(state.timer);state.done=true;$("playarea").innerHTML='<div class="big">🎉 CONGRATULATIONS!</div><p>You completed all 100 levels of '+titleFor(state.game)+'!</p><p>Total points: '+state.points+'</p><button onclick="startGame(state.game)">Play again</button>';speak("Congratulations! One hundred levels completed.");$("nextBtn").style.display="none"}
+function titleFor(g){return ({potion:"Daniela's Potion Lab",country:"Country Speed Review",maze:"Poly vs Mono Maze",names:"Full-Name Mastery",awareness:"Relationship Awareness Challenge"})[g]}
+function startGame(g){clearInterval(state.timer);state.game=g;state.level=1;state.lives=5;state.done=false;state.usedNames=new Set();$("menu").style.display="none";$("historyPanel").style.display="none";$("game").classList.add("active");$("gameTitle").textContent=titleFor(g);$("nextBtn").style.display="none";updateStats();loadLevel()}
+function loadLevel(){state.done=false;$("level").textContent=state.level;$("nextBtn").style.display="none";setFeedback("");if(state.game==="potion")loadPotion();if(state.game==="country")loadCountry();if(state.game==="maze")loadMaze();if(state.game==="names")loadName();if(state.game==="awareness")loadAwareness()}
+function advance(){if(state.level>=100){finishAll();return}state.level++;loadLevel()}
+function loadPotion(){state.recipe=shuffle(ingredients).slice(0,3+Math.min(2,Math.floor(state.level/25)));state.recipeIndex=0;const area=$("playarea");area.innerHTML='<div class="bottle">⚗️</div><p>Memorize this recipe, then add each ingredient in order.</p><div class="sequence" id="recipePreview"></div><div class="ingredients" id="ingredientButtons"></div>';const preview=$("recipePreview");preview.textContent=state.recipe.join(" → ");setTimeout(()=>{if(!state.done&&state.game==="potion")preview.textContent="Recipe hidden! Select the correct sequence.";},Math.max(1800,3500-state.level*12));const btns=$("ingredientButtons");shuffle(ingredients).forEach(item=>{const b=document.createElement("button");b.className="ingredient";b.textContent="🧴 "+item;b.onclick=()=>{if(state.done)return;if(item===state.recipe[state.recipeIndex]){state.recipeIndex++;beep(700);if(state.recipeIndex===state.recipe.length)success("Potion recipe");else setFeedback("Good! "+state.recipeIndex+"/"+state.recipe.length+" ingredients.");}else mistake("Wrong ingredient order.");};btns.appendChild(b)});setTimer(Math.max(12,28-Math.floor(state.level/7)))}
+function loadCountry(){const fact=rand(countryFacts);$("playarea").innerHTML='<div class="big">🌍 Country knowledge sprint</div><h3>'+fact.q+'</h3><div class="ingredients" id="answers"></div><p class="muted">Answer the factual geography question. This round does not classify a country’s people or relationships.</p>';shuffle(fact.opts).forEach(opt=>{const b=document.createElement("button");b.textContent=opt;b.onclick=()=>{if(state.done)return;if(opt===fact.a)success("Country fact: "+fact.a);else mistake("Not quite. Try the next question.");};$("answers").appendChild(b)});setTimer(Math.max(7,15-Math.floor(state.level/15)))}
+function loadName(){let full;do{full=rand(firstNames)+" "+rand(middleNames)+" "+rand(surnames)}while(state.usedNames.has(full));state.usedNames.add(full);state.currentName=full;$("playarea").innerHTML='<div class="big">💌 Name Mastery</div><p>Type this fictional adult character’s complete name exactly:</p><div class="sequence" style="font-size:1.7rem">'+full+'</div><div class="row"><input id="nameInput" autocomplete="off" placeholder="First Middle Surname"><button id="submitName">Submit</button></div><p class="muted">Press Enter to submit. One incorrect submission costs one life.</p>';const input=$("nameInput");$("submitName").onclick=checkName;input.addEventListener("keydown",e=>{if(e.key==="Enter")checkName()});input.focus();setTimer(Math.max(9,22-Math.floor(state.level/8)))}
+function checkName(){if(state.done)return;const val=$("nameInput").value.trim().replace(/\s+/g," ").toLowerCase();if(val===state.currentName.toLowerCase())success("Character: "+state.currentName);else mistake("Incorrect full name. Check spelling and order.");}
+function loadAwareness(){const q=rand(awareness);$("playarea").innerHTML='<div class="big">⚖️ Relationship awareness</div><h3>'+q.q+'</h3><div class="row"><button class="mint" id="yes">YES</button><button class="danger" id="no">NO</button></div><p class="muted">Choose based on respect, communication, and consent.</p>';function answer(v){if(state.done)return;if(v===q.a){success(q.why);setFeedback("Correct! "+q.why)}else mistake("Incorrect. Remember consent and respect.");} $("yes").onclick=()=>answer("Yes");$("no").onclick=()=>answer("No");setTimer(Math.max(7,14-Math.floor(state.level/14)))}
+function loadMaze(){const area=$("playarea");area.innerHTML='<div class="big">🌀 Collect all hearts!</div><p>Move the glowing player with your mouse. Collect every heart token; avoid the purple obstacles and walls. On touch screens, drag on the maze.</p><canvas id="mazeCanvas" width="700" height="360"></canvas><p class="muted">Hearts left: <b id="heartsLeft">0</b></p>';const c=$("mazeCanvas"),ctx=c.getContext("2d");const cols=14,rows=7,cell=50;let player={x:25,y:25,r:12},walls=[],hearts=[],enemies=[];for(let r=0;r<rows;r++)for(let col=0;col<cols;col++){if(Math.random()<.12&&!(r===0&&col===0)&&!(r===rows-1&&col===cols-1))walls.push({x:col*cell,y:r*cell})}for(let i=0;i<Math.min(5,2+Math.floor(state.level/20));i++){let p;do{p={x:Math.floor(Math.random()*cols)*cell+25,y:Math.floor(Math.random()*rows)*cell+25}}while(walls.some(w=>Math.abs(w.x+25-p.x)<30&&Math.abs(w.y+25-p.y)<30));hearts.push({...p,r:9})}for(let i=0;i<Math.min(4,1+Math.floor(state.level/25));i++)enemies.push({x:Math.random()*650+25,y:Math.random()*300+25,dx:(Math.random()-.5)*2,dy:(Math.random()-.5)*2,r:13});$("heartsLeft").textContent=hearts.length;let running=true;function draw(){if(!running||state.done)return;ctx.clearRect(0,0,700,350);ctx.fillStyle="#382250";walls.forEach(w=>ctx.fillRect(w.x+2,w.y+2,46,46));ctx.fillStyle="#ffcf70";hearts.forEach(h=>{ctx.font="22px sans-serif";ctx.fillText("💗",h.x-12,h.y+8)});enemies.forEach(e=>{ctx.fillStyle="#b68cff";ctx.beginPath();ctx.arc(e.x,e.y,e.r,0,7);ctx.fill();e.x+=e.dx;e.y+=e.dy;if(e.x<12||e.x>688)e.dx*=-1;if(e.y<12||e.y>338)e.dy*=-1;if(Math.hypot(e.x-player.x,e.y-player.y)<e.r+player.r){running=false;mistake("You bumped into an obstacle!");if(!state.done){setTimeout(()=>{if(state.game==="maze"&&!state.done)loadMaze()},600)}return}});ctx.fillStyle="#ff75b4";ctx.beginPath();ctx.arc(player.x,player.y,player.r,0,7);ctx.fill();hearts=hearts.filter(h=>{if(Math.hypot(h.x-player.x,h.y-player.y)<24){beep(760);return false}return true});$("heartsLeft").textContent=hearts.length;if(!hearts.length){running=false;success("All heart tokens collected")}requestAnimationFrame(draw)}function move(e){const rect=c.getBoundingClientRect();const sx=c.width/rect.width,sy=c.height/rect.height;const x=(e.clientX-rect.left)*sx,y=(e.clientY-rect.top)*sy;const blocked=walls.some(w=>x>w.x-12&&x<w.x+62&&y>w.y-12&&y<w.y+62);if(!blocked){player.x=Math.max(12,Math.min(688,x));player.y=Math.max(12,Math.min(338,y))}}c.addEventListener("pointermove",move);c.addEventListener("pointerdown",move);state.maze={stop:()=>running=false};draw();setTimer(Math.max(20,40-Math.floor(state.level/5)))}
+$("nextBtn").onclick=advance;$("quitBtn").onclick=()=>{clearInterval(state.timer);if(state.maze)state.maze.stop();$("game").classList.remove("active");$("menu").style.display="grid";$("nextBtn").style.display="none"};$("homeBtn").onclick=()=>$("quitBtn").click();$("restartBtn").onclick=()=>startGame(state.game);
+$("soundBtn").onclick=()=>{state.sound=!state.sound;$("soundBtn").textContent="🔊 Sound: "+(state.sound?"ON":"OFF");if(state.sound)speak("Sound on")};
+$("historyBtn").onclick=()=>{$("historyPanel").style.display="block";$("historyList").innerHTML=state.history.length?state.history.map(x=>"<li><b>"+x.game+"</b> · Level "+x.level+" · "+escapeHtml(x.label)+"</li>").join(""):"<li>No completed levels yet.</li>";$("historyPanel").scrollIntoView({behavior:"smooth"})};$("closeHistory").onclick=()=>$("historyPanel").style.display="none";
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+updateStats();
+</script>
+</body>
+</html>
